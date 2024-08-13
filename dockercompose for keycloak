@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: bitnami_keycloak
+      POSTGRES_USER: db_username
+      POSTGRES_PASSWORD: db_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: bitnami/keycloak:21.1.1
+    container_name: keycloak
+    environment:
+      JAVA_TOOL_OPTIONS: -Dkeycloak.profile.feature.admin-fine-grained-authz=enabled -Dkeycloak.profile.feature.token-exchange=enabled
+      JAVA_OPTS_APPEND: -Dkeycloak.profile=preview -Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.profile.feature.token-exchange=enabled -Dkeycloak.profile.feature.admin-fine-grained-authz=enabled -Dkeycloak.profile.feature.impersonation=enabled
+      KC_FEATURES: account-api,account2,admin-api,admin2,authorization,ciba,client-policies,impersonation,js-adapter,par,step-up-authentication,web-authn,token-exchange,admin-fine-grained-authz
+
+      #KC_FEATURES: token-exchange
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_EXTRA_ARGS: "-Dkeycloak.profile.feature.scripts=enabled"
+      KEYCLOAK_DATABASE_USER: db_username
+      KEYCLOAK_DATABASE_PASSWORD: db_password
+      KEYCLOAK_DATABASE_NAME: bitnami_keycloak
+      KEYCLOAK_DATABASE_HOST: postgres
+      PROXY_ADDRESS_FORWARDING: "true"
+    ports:
+      - "8082:8080"
+      - "7800:7800"
+      - "8443:8443"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

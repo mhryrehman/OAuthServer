@@ -84,16 +84,15 @@ public class SecurityConfig {
 	@Order(2)
 	@Bean
 	public SecurityFilterChain appSecurity(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated())
-		.formLogin(Customizer.withDefaults());
+//		httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated())
+//		.formLogin(Customizer.withDefaults());
 		
-//		httpSecurity
-//          .authorizeHttpRequests(authorizeRequests ->
-//              authorizeRequests
-//                  .requestMatchers("/oauth2/token").permitAll()
-//                  .anyRequest().authenticated())
-//          .csrf(request->request.disable())
-//          .formLogin(request->request.disable());
+		httpSecurity
+          .authorizeHttpRequests(authorizeRequests ->
+              authorizeRequests
+                  .anyRequest().permitAll())
+          .csrf(request->request.disable())
+          .formLogin(request->request.disable());
 		  
 		return httpSecurity.build();
 	}
